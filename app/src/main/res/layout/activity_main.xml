@@ -27,9 +27,9 @@
         android:id="@+id/txtCodRack"
         android:layout_below="@+id/txtRack"
         android:layout_centerHorizontal="true"
-        android:width="550dip"
         android:enabled="true"
-        android:editable="false" />
+        android:editable="false"
+        android:width="700dip" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -39,7 +39,8 @@
         android:id="@+id/textView2"
         android:layout_below="@+id/txtCodRack"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="22dp" />
+        android:layout_marginTop="22dp"
+        android:minWidth="0dp" />
 
     <ListView
         android:layout_width="550dip"
@@ -47,7 +48,6 @@
         android:id="@+id/listFardos"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/textView2"
-        android:stackFromBottom="false"
-        android:minWidth="500dip" />
+        android:stackFromBottom="false" />
 
 </RelativeLayout>

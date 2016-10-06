@@ -14,17 +14,22 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import com.coprotab.agarcia.coopbase.CoopBaseDBHelper;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class Main extends ActionBarActivity {
     String codrack = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        final CoopBaseDBHelper db = new CoopBaseDBHelper(getApplicationContext());
 
         //sincBase();
 
@@ -35,19 +40,16 @@ public class Main extends ActionBarActivity {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    validarFormatoRack(txtCodRack.getText().toString());
-                    codrack = txtCodRack.getText().toString();
-                    //validar si es rack
-                    if(OnLine())
-                    {
-                        //Trabaja online
+                    try {
+                        codrack = txtCodRack.getText().toString();
+                        db.agregarRack(Integer.parseInt(codrack));
+                        Alert("confirmado", "ingresado", Main.this);
+                        txtCodRack.setText("");
+                        //validar si es rack
+                        return true;
+                    } catch (Exception ex) {
+                        return false;
                     }
-                    else
-                    {
-                        //Ingresa en tablas auxiliares
-                    }
-
-                    return true;
                 } else {
                     return false;
                 }
@@ -69,8 +71,6 @@ public class Main extends ActionBarActivity {
               }).create().show();
     }
 
-    protected void sincBase() {
-    }
 
     protected boolean validarRackOnLine(){
         return true;
@@ -83,10 +83,7 @@ public class Main extends ActionBarActivity {
             Integer longitud = rack.length();
             if (inicial.equals( "0" )) {
 
-                if (rack.length() == 8) return true;
-
-            else
-                return false;
+                return rack.length() == 8;
             }
             else
 
@@ -104,15 +101,7 @@ public class Main extends ActionBarActivity {
         try
         {
             Integer longitud = fardo.length();
-            if(longitud == 9)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
+            return longitud == 9;
 
         }
         catch (Exception ex){
