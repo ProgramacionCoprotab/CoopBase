@@ -7,8 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.coprotab.agarcia.coopbase.Main"
-    android:background="@android:color/background_light">
+    tools:context="com.coprotab.agarcia.coopbase.Main">
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,11 +24,10 @@
         android:inputType="number"
         android:ems="10"
         android:id="@+id/txtCodRack"
-        android:layout_below="@+id/txtRack"
-        android:layout_centerHorizontal="true"
         android:enabled="true"
         android:editable="false"
-        android:width="700dip" />
+        android:layout_below="@+id/txtRack"
+        android:layout_toEndOf="@+id/textView2" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -47,7 +45,17 @@
         android:layout_height="wrap_content"
         android:id="@+id/listFardos"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/textView2"
-        android:stackFromBottom="false" />
+        android:stackFromBottom="false"
+        android:layout_below="@+id/textView2" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sinc"
+        android:id="@+id/btSinc"
+        android:layout_below="@+id/txtRack"
+        android:layout_marginStart="79dp"
+        android:layout_alignEnd="@+id/listFardos"
+        android:layout_alignParentEnd="false" />
 
 </RelativeLayout>

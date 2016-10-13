@@ -1,4 +1,14 @@
 <resources>
-    <string name="app_name">CoopBase</string>
+    <string name="app_name">COPROTAB</string>
     <string name="sinc">Sincronizar</string>
+    <string name="usuario">Ariel</string>
+    <string name="seccion_1">Ajustes</string>
+    <string name="seccion_2">Item 2</string>
+    <string name="seccion_3">Item 3</string>
+    <string name="otras_opciones">Otros</string>
+    <string name="opcion_1">Opciones 1</string>
+    <string name="opcion_2">Opciones 2</string>
+    <string name="labelmain">Lecturas</string>
+    <string name="labelajustes">Ajustes de usuario</string>
+
 </resources>

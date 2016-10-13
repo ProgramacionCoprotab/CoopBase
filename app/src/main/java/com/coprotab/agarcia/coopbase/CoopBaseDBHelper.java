@@ -6,6 +6,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.AndroidHttpTransport;
+import org.ksoap2.transport.HttpTransportSE;
 
 /**
  * Created by agarcia on 04/10/2016.
@@ -26,6 +33,10 @@ public class CoopBaseDBHelper extends SQLiteOpenHelper{
     public static final String FXRLEGAJO_ID =  "idlegajo";
     public static final String FXRFECHA = "fecha";
 
+    public static final String TABLA_USUARIO = "usuario";
+    public static final String USUARIO_LEGAJO = "_leg";
+    public static final String USUARIO_NOMBRE = "nombre";
+
     private static final String SQL_CREAR1 = "create table "+ TABLA_RACK + "("
             + RACK_ID + " integer primary key)";
 
@@ -36,13 +47,20 @@ public class CoopBaseDBHelper extends SQLiteOpenHelper{
             + FXRLEGAJO_ID + " integer, "
             + FXRFECHA + " text)";
 
+    private static final String SQL_CREAR3 = "create table "+ TABLA_USUARIO + "("
+            + USUARIO_LEGAJO + " integer primary key,"
+            + USUARIO_NOMBRE + " text)";
+
+
     public CoopBaseDBHelper(Context context) {
+
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     public void onCreate(SQLiteDatabase db){
         db.execSQL(SQL_CREAR1);
-        //db.execSQL(SQL_CREAR2);
+        db.execSQL(SQL_CREAR2);
+        db.execSQL(SQL_CREAR3);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
@@ -75,6 +93,19 @@ public class CoopBaseDBHelper extends SQLiteOpenHelper{
         db.close();
     }
 
+    public void agregarUsuario(Integer legajo, String nombre){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(USUARIO_LEGAJO, legajo);
+        values.put(USUARIO_NOMBRE, nombre);
+
+        db.insert(TABLA_USUARIO, null, values);
+        db.close();
+    }
+
     public boolean eliminarRackxFardo(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         try{
@@ -101,6 +132,17 @@ public class CoopBaseDBHelper extends SQLiteOpenHelper{
         }
     }
 
+    public boolean eliminarUsuario() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try{
+            db.delete(TABLA_USUARIO, null, null);
+            db.close();
+            return true;
+
+        }catch(Exception ex){
+            return false;
+        }
+    }
 
     public boolean existeRack(int id){
         try {
@@ -129,5 +171,7 @@ public class CoopBaseDBHelper extends SQLiteOpenHelper{
 
     }
 
-
 }
+
+
+

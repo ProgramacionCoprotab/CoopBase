@@ -3,25 +3,33 @@ package com.coprotab.agarcia.coopbase;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.support.v7.app.ActionBarActivity;
+import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import com.coprotab.agarcia.coopbase.CoopBaseDBHelper;
+import android.widget.TextView;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
-import java.util.List;
-import java.util.Scanner;
 
-public class Main extends ActionBarActivity {
+public class Main extends AppCompatActivity {
     String codrack = "";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +42,19 @@ public class Main extends ActionBarActivity {
         //sincBase();
 
         final EditText txtCodRack = (EditText)findViewById(R.id.txtCodRack);
+        final Button btSinc = (Button)findViewById(R.id.btSinc);
         ListView listaFardos = (ListView)findViewById(R.id.listFardos);
+
+        btSinc.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                ConsultaWSDB consulta = new ConsultaWSDB();
+                consulta.execute();
+            }
+        });
+
+
 
         txtCodRack.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -57,7 +77,27 @@ public class Main extends ActionBarActivity {
         });
     }
 
-    protected void Alert(String Titulo, String Mensaje,Context context){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_navview, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_seccion_1:
+                Intent i = new Intent(getApplicationContext(), User.class);
+                startActivity(i);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    public void Alert(String Titulo, String Mensaje,Context context){
         new AlertDialog.Builder(context)
               .setTitle(Titulo)
               .setMessage(Mensaje)
@@ -138,4 +178,79 @@ public class Main extends ActionBarActivity {
             return false;
         }
     }
+
+    private class ConsultaWSDB extends AsyncTask<String,Integer,Boolean> {
+        Context context;
+        CoopBaseDBHelper db = new CoopBaseDBHelper(getApplicationContext());
+
+        protected Boolean doInBackground(String... params){
+            boolean resul = true;
+
+            Integer[] vector;
+
+            String NAMESPACE = "http://192.168.50.248/";
+            String METHOD_NAME = "ListadoRacks";
+            String SOAP_ACTION = "http://192.168.50.248/ListadoRacks";
+            String URL = "http://192.168.50.248:8819/ServicioTabaco.asmx";
+
+            SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
+
+            /*PropertyInfo pi = new PropertyInfo(); En este metodo no hay argumentos
+            pi.setName("");
+            pi.setType(null);
+            pi.setValue(null);
+            Request.addProperty(pi);*/
+
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11); // version 1.1 de xml
+            envelope.dotNet = true;
+            envelope.setOutputSoapObject(Request);
+
+            //AndroidHttpTransport androidHttpTransport = new AndroidHttpTransport(URL);
+            HttpTransportSE transporte = new HttpTransportSE(URL);
+
+            try
+            {
+                transporte.call(SOAP_ACTION, envelope);
+
+                SoapObject resSoap =(SoapObject)envelope.getResponse();
+
+                int cantidad = resSoap.getPropertyCount();
+                vector = new Integer[cantidad];
+
+                for (int i = 0; i < cantidad; i++)
+                {
+                    int nrack;
+                    SoapObject ic = (SoapObject)resSoap.getProperty(i);
+
+                    nrack = Integer.parseInt(ic.getProperty(0).toString());
+
+                    vector[i] = nrack;
+                    db.agregarRack(nrack);
+                }
+            }
+            catch (Exception ex)
+            {
+                resul = false;
+            }
+
+            return resul;
+        }
+
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                Main main = new Main();
+                TextView txtFardos = (TextView)findViewById(R.id.txtCodRack);
+                txtFardos.setText("CORRECTO");
+            }
+            else
+            {
+
+            }
+        }
+    }
+
+
 }
+
+
+
